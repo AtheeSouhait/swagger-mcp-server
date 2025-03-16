@@ -25,7 +25,7 @@ export type Endpoint = {
 export class SwaggerParser {
     constructor(private readonly name: string, private readonly schema: JsonSchema) {
     }
-    
+
     private extractParameters(operation: any): Parameter[] {
         const parameters: Parameter[] = [];
         if (operation.parameters) {
@@ -42,7 +42,7 @@ export class SwaggerParser {
         }
         return parameters;
     }
-    
+
     private generateExampleForType(type: string): string {
         switch (type) {
             case 'string': return 'example_string';
@@ -52,10 +52,10 @@ export class SwaggerParser {
             default: return '';
         }
     }
-    
+
     private generateSampleFromSchema(schema: any): any {
         if (!schema) return {};
-        
+
         if (schema.$ref) {
             const refPath = schema.$ref.replace('#/components/schemas/', '');
             const schemaObj = this.schema as Record<string, any>;
@@ -64,7 +64,7 @@ export class SwaggerParser {
             }
             return {};
         }
-        
+
         switch (schema.type) {
             case 'object':
                 const result: Record<string, any> = {};
@@ -74,13 +74,13 @@ export class SwaggerParser {
                     }
                 }
                 return result;
-                
+
             case 'array':
                 if (schema.items) {
                     return [this.generateSampleFromSchema(schema.items)];
                 }
                 return [];
-                
+
             case 'string':
                 if (schema.enum && schema.enum.length > 0) {
                     return schema.enum[0];
@@ -90,17 +90,17 @@ export class SwaggerParser {
                 if (schema.format === 'email') return 'user@example.com';
                 if (schema.format === 'uuid') return '00000000-0000-0000-0000-000000000000';
                 return 'string';
-                
+
             case 'number':
             case 'integer':
                 return 0;
-                
+
             case 'boolean':
                 return false;
-                
+
             case 'null':
                 return null;
-                
+
             default:
                 if (schema.oneOf && schema.oneOf.length > 0) {
                     return this.generateSampleFromSchema(schema.oneOf[0]);
@@ -118,71 +118,78 @@ export class SwaggerParser {
                 return {};
         }
     }
-    
+
     private extractRequestBodyExample(operation: any): JsonSchema {
         if (operation.requestBody && operation.requestBody.content) {
             const content = operation.requestBody.content['application/json'];
-            
+
             if (content) {
                 if (content.example) {
                     return content.example;
                 }
-                
+
                 if (content.schema && content.schema.example) {
                     return content.schema.example;
                 }
-                
+
                 if (content.schema) {
                     return this.generateSampleFromSchema(content.schema);
                 }
             }
         }
-        
+
         return {};
     }
-    
+
     private resolveSuccessExampleResponse(operation: any): JsonSchema {
-        if (operation.responses && operation.responses['200']) {
-            const successResponse = operation.responses['200'];
-            
-            if (successResponse.content && successResponse.content['application/json']) {
-                const content = successResponse.content['application/json'];
-                
-                if (content.example) {
-                    return content.example;
-                } 
-                
-                if (content.schema && content.schema.example) {
-                    return content.schema.example;
-                }
-                
-                if (content.schema) {
-                    return this.generateSampleFromSchema(content.schema);
+        if (operation.responses) {
+            for (const code in operation.responses) {
+                const codeNum = parseInt(code, 10);
+                if (!isNaN(codeNum) && Math.floor(codeNum / 100) === 2) {
+                    const successResponse = operation.responses[code];
+
+                    if (successResponse.content && successResponse.content['application/json']) {
+                        const content = successResponse.content['application/json'];
+
+                        if (content.example) {
+                            return content.example;
+                        }
+
+                        if (content.schema && content.schema.example) {
+                            return content.schema.example;
+                        }
+
+                        if (content.schema) {
+                            return this.generateSampleFromSchema(content.schema);
+                        }
+                    }
+
+                    return {};
                 }
             }
         }
-        
+
         return {};
     }
-    
+
     private resolveErrorExampleResponse(operation: any): JsonSchema {
         if (operation.responses) {
             for (const code in operation.responses) {
                 const codeNum = parseInt(code, 10);
                 if (!isNaN(codeNum) && Math.floor(codeNum / 100) >= 4) {
                     const errorResponse = operation.responses[code];
-                    
+
                     if (errorResponse.content && errorResponse.content['application/json']) {
                         const content = errorResponse.content['application/json'];
-                        
+
                         if (content.example) {
                             return content.example;
-                        } 
-                        
+                        }
+
                         if (content.schema && content.schema.example) {
                             return content.schema.example;
                         }
-                        
+
                         if (content.schema) {
                             return this.generateSampleFromSchema(content.schema);
                         }
@@ -190,7 +197,7 @@ export class SwaggerParser {
                 }
             }
         }
-        
+
         return {
             error: {
                 code: 400,
@@ -198,20 +205,20 @@ export class SwaggerParser {
             }
         };
     }
-    
+
     public listEndpoints(): Iterable<Endpoint> {
         const endpoints: Endpoint[] = [];
-        
+
         const schemaObj = this.schema as Record<string, any>;
         const paths = schemaObj?.paths || {};
-        
+
         for (const path in paths) {
             const pathItem = paths[path];
-            
+
             for (const method in pathItem) {
                 if (['get', 'post', 'put', 'delete', 'patch', 'options', 'head'].includes(method)) {
                     const operation = pathItem[method];
-                    
+
                     endpoints.push({
                         swaggerName: this.name,
                         path,
@@ -227,7 +234,7 @@ export class SwaggerParser {
                 }
             }
         }
-        
+
         return endpoints;
     }
 }

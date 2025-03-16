@@ -145,8 +145,7 @@ export class SwaggerMcpServer {
         
         const pathParams = endpoint.parameters.filter(p => p.in === 'path');
         const queryParams = endpoint.parameters.filter(p => p.in === 'query');
-        const bodyParams = endpoint.parameters.filter(p => p.in === 'body');
-        const otherParams = endpoint.parameters.filter(p => !['path', 'query', 'body'].includes(p.in));
+        const otherParams = endpoint.parameters.filter(p => !['path', 'query'].includes(p.in));
         
         if (pathParams.length > 0) {
             result += `### Path Parameters\n`;
@@ -159,14 +158,6 @@ export class SwaggerMcpServer {
         if (queryParams.length > 0) {
             result += `### Query Parameters\n`;
             for (const param of queryParams) {
-                result += `- \`${param.name}\` (${param.type}${param.required ? ', required' : ''}): ${param.description}\n`;
-            }
-            result += `\n`;
-        }
-        
-        if (bodyParams.length > 0) {
-            result += `### Body Parameters\n`;
-            for (const param of bodyParams) {
                 result += `- \`${param.name}\` (${param.type}${param.required ? ', required' : ''}): ${param.description}\n`;
             }
             result += `\n`;
@@ -198,9 +189,7 @@ export class SwaggerMcpServer {
         result += "```http\n";
         result += `${endpoint.method.toUpperCase()} ${exampleUrl}\n`;
         
-        const hasRequestBody = bodyParams.length > 0;
-             
-        if (hasRequestBody) {
+        if (endpoint.requestBodyExample) {
             result += "Content-Type: application/json\n";
         }
         
@@ -210,7 +199,7 @@ export class SwaggerMcpServer {
             }
         }
         
-        if (hasRequestBody) {
+        if (endpoint.requestBodyExample) {
             result += "\n";
             result += JSON.stringify(endpoint.requestBodyExample, null, 2);
         }
