@@ -4,3 +4,4 @@ build/
 .cursorrules
 .cursorignore
 .cursorignorerules
+test_config.json

@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
+  "bin": {
+    "swagger-mcp-server": "./index.js"
+  },
   "scripts": {
     "build": "tsc && chmod 755 build/index.js",
-    "run": "node build/index.js"
+    "run": "npx @modelcontextprotocol/inspector node build/index.js test_config.json"
   },
   "keywords": [],
   "author": "",
