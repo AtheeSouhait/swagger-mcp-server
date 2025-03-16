@@ -1,0 +1,17 @@
+# Source files
+src/
+
+# Development files
+.git/
+.gitignore
+.cursor/
+tsconfig.json
+
+# Test files
+test_config.json
+
+# Node modules
+node_modules/
+
+# Logs
+*.log 

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Config, loadConfig } from './config.js';
 import { SwaggerCollection } from "./swager_collection.js";
 import { SwaggerMcpServer } from "./swagger_mcp_server.js";

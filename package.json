@@ -2,18 +2,34 @@
   "name": "swagger-mcp-server",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "build/index.js",
   "bin": {
-    "swagger-mcp-server": "./index.js"
+    "swagger-mcp-server": "build/index.js"
   },
   "scripts": {
     "build": "tsc && chmod 755 build/index.js",
-    "run": "npx @modelcontextprotocol/inspector node build/index.js test_config.json"
+    "run": "npx @modelcontextprotocol/inspector node build/index.js test_config.json",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "swagger",
+    "openapi",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "api"
+  ],
+  "author": "Marcin Sucharski",
   "license": "ISC",
-  "description": "",
+  "description": "Model Context Protocol server for swagger endpoints",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/swagger-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/swagger-mcp-server/issues"
+  },
+  "homepage": "https://github.com/yourusername/swagger-mcp-server#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.7.0",
     "zod": "^3.24.2"
@@ -21,5 +37,11 @@
   "devDependencies": {
     "@types/node": "^22.13.10",
     "typescript": "^5.8.2"
-  }
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "build/**/*"
+  ]
 }
