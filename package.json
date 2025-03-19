@@ -24,12 +24,12 @@
   "description": "Model Context Protocol server for swagger endpoints",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/swagger-mcp-server.git"
+    "url": "git+https://github.com/marcin-sucharski/swagger-mcp-server.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/swagger-mcp-server/issues"
+    "url": "https://github.com/marcin-sucharski/swagger-mcp-server/issues"
   },
-  "homepage": "https://github.com/yourusername/swagger-mcp-server#readme",
+  "homepage": "https://github.com/marcin-sucharski/swagger-mcp-server#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.7.0",
     "zod": "^3.24.2"
